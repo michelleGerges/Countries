@@ -13,6 +13,7 @@ struct CountriesApp: App {
 
     var body: some Scene {
         WindowGroup {
+            AppCoordinatorView()
         }
     }
 }
