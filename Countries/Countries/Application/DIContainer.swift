@@ -11,9 +11,9 @@ import Foundation
 struct Dependency<T> {
     
     var dependency: T
-
+    
     init() {
-        guard let resolved = DIContainer.resolve(T.self) else {
+        guard let resolved = DIContainer.shared.resolve(T.self) else {
             fatalError("No Dependency Resolved for \(T.self)")
         }
         dependency = resolved
@@ -27,17 +27,22 @@ struct Dependency<T> {
 
 class DIContainer {
     
-    private static var factories: [String: () -> Any] = [:]
+    static let shared = DIContainer()
+    private var factories: [String: () -> Any] = [:]
     
-    static func register<T>(_ dependency: T.Type, _ factory: @autoclosure @escaping () -> T) {
+    func register<T>(_ dependency: T.Type, _ factory: @escaping () -> T) {
         factories[String(describing: T.self)] = factory
     }
     
-    static func resolve<T>(_ dependency: T.Type) -> T? {
-        factories[String(describing: dependency.self)]?() as? T
+    func resolve<T>(_ dependency: T.Type) -> T? {
+        factories[String(describing: T.self)]?() as? T
     }
     
-    static func registerDependencies() {
-        register(URLSession.self, URLSession.shared)
+    func registerDependencies() {
+        register(URLSessionProtocol.self) { URLSession.shared }
+        register(NetworkClient.self) { NetworkClientImplementation() }
+        register(CountryRemoteRepo.self) { CountryRemoteRepoImplementation() }
+        register(LocationProvider.self) { LocationProviderImplementation() }
+        register(CountryUseCase.self) { CountryUseCaseImplementation() }
     }
 }
