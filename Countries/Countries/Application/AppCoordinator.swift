@@ -24,7 +24,7 @@ struct AppCoordinatorView: View {
     var body: some View {
         NavigationStack(path: $appCoordinator.navigationPath) {
             Group {
-                
+                HomeView()
             }
             .environmentObject(appCoordinator)
         }

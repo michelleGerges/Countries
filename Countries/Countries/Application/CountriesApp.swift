@@ -11,6 +11,10 @@ import SwiftData
 @main
 struct CountriesApp: App {
 
+    init() {
+        DIContainer.shared.registerDependencies()
+    }
+    
     var body: some Scene {
         WindowGroup {
             AppCoordinatorView()
