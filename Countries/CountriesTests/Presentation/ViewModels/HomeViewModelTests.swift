@@ -21,7 +21,7 @@ class HomeViewModelTests: XCTestCase {
     func testLoadCountriesSetsLoadingThenCompleted() async {
         useCase.delayNanoseconds = 2_000_000_000 // 2 seconds
         
-        let sut = await MainActor.run { HomeViewModel() }
+        let sut = HomeViewModel()
 
         XCTAssertFalse(sut.countries.loading)
         let task = Task { await sut.loadCountries() }
@@ -36,7 +36,7 @@ class HomeViewModelTests: XCTestCase {
         useCase.delayNanoseconds = 2_000_000_000 // 2 seconds
         useCase.nextError = NetworkError.connectivity
         
-        let sut = await MainActor.run { HomeViewModel() }
+        let sut = HomeViewModel()
         let task = Task { await sut.loadCountries() }
         await Task.yield()
         XCTAssertTrue(sut.countries.loading)
@@ -45,9 +45,9 @@ class HomeViewModelTests: XCTestCase {
         XCTAssertFalse(sut.countries.completed)
     }
 
-    func testHomeScreenTitleIsLocalized() async {
-        let sut = await MainActor.run { HomeViewModel() }
-        XCTAssertEqual(sut.title, NSLocalizedString("HOME_SCREEN_TITLE", comment: ""))
+    func testHomeScreenTitleIsLocalized()  {
+        let sut = HomeViewModel()
+        XCTAssertEqual(sut.title, "Home")
     }
 }
 

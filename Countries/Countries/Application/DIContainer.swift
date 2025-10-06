@@ -44,5 +44,6 @@ class DIContainer {
         register(CountryRemoteRepo.self) { CountryRemoteRepoImplementation() }
         register(LocationProvider.self) { LocationProviderImplementation() }
         register(CountryUseCase.self) { CountryUseCaseImplementation() }
+        register(CountrySearchUseCase.self) { CountrySearchUseCaseImplementation() }
     }
 }
