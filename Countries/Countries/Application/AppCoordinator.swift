@@ -19,6 +19,10 @@ class AppCoordinator: ObservableObject {
     func navigateToSearch() {
         navigationPath.append(Route.search)
     }
+    
+    func navigateToCountryDetials(_ country: Country) {
+        navigationPath.append(country)
+    }
 }
 
 struct AppCoordinatorView: View {
@@ -32,6 +36,9 @@ struct AppCoordinatorView: View {
                     switch route {
                     case .search: CountrySearchView()
                     }
+                })
+                .navigationDestination(for: Country.self, destination: { country in
+                    CountryDetailsView(country: country)
                 })
                 .environmentObject(appCoordinator)
         }

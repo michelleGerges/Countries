@@ -40,6 +40,10 @@ struct HomeView: View {
             List(countries) { country in
                 CountryItemView(country: country,
                                 action: countries.count == 1 ? .none : .remove(viewModel.removeCountry))
+                .contentShape(Rectangle())
+                .onTapGesture {
+                    coordinator.navigateToCountryDetials(country)
+                }
             }
         }
     }
