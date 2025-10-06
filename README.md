@@ -15,6 +15,7 @@ View → ViewModel → UseCase → Repository → Data Sources (Locale | Remote)
 
 - Search countries
 - Location-based detection
+- Add, Delete Country 
 
 ## Patterns
 
