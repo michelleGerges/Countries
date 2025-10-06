@@ -13,8 +13,8 @@ View → ViewModel → UseCase → Repository → Data Sources (Locale | Remote)
 
 ## Features
 
-- Search countries [WIP]
-- Location-based detection [WIP]
+- Search countries
+- Location-based detection
 
 ## Patterns
 
