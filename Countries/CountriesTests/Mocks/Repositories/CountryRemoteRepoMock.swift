@@ -8,19 +8,22 @@
 import Foundation
 @testable import Countries
 
-class CountryRemoteRepoMock: CountryRemoteRepo {
+final class CountryRemoteRepoMock: CountryRemoteRepo {
     var nextCountry: Country = Country(
         name: CountryName(common: "Egypt", official: "Arab Republic of Egypt"),
         currencies: ["EGP": Currency(name: "Egyptian pound")],
         capital: ["Cairo"]
     )
+    var nextCountries: [Country] = []
     var nextError: Error?
 
     func fetchCountry(code: String) async throws -> Country {
         if let error = nextError { throw error }
         return nextCountry
     }
+    
+    func fetchCountries(name: String) async throws -> [Country] {
+        if let error = nextError { throw error }
+        return nextCountries
+    }
 }
-
-
-

@@ -34,6 +34,24 @@ class CountryRemoteRepoDataRepositoriesTests: XCTestCase {
         XCTAssertEqual(result.capital.first, "Cairo")
         XCTAssertEqual(result.currencies["EGP"]?.name, "Egyptian pound")
     }
+    
+    func testFetchCountriesDelegatesToNetworkClient() async throws {
+        let countries = [
+            Country(
+                name: CountryName(common: "Egypt", official: "Arab Republic of Egypt"),
+                currencies: ["EGP": Currency(name: "Egyptian pound")],
+                capital: ["Cairo"]
+            )
+        ]
+        let data = try JSONEncoder().encode(countries)
+        client.nextData = data
+
+        let repo = CountryRemoteRepoImplementation()
+        let result: [Country] = try await repo.fetchCountries(name: "Egypt")
+
+        XCTAssertEqual(result.count, 1)
+        XCTAssertEqual(result.first?.name.common, "Egypt")
+    }
 }
 
 

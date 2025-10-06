@@ -7,6 +7,7 @@
 
 protocol CountryRemoteRepo {
     func fetchCountry(code: String) async throws -> Country
+    func fetchCountries(name: String) async throws -> [Country]
 }
 
 class CountryRemoteRepoImplementation: CountryRemoteRepo {
@@ -15,5 +16,9 @@ class CountryRemoteRepoImplementation: CountryRemoteRepo {
     
     func fetchCountry(code: String) async throws -> Country {
         try await netowrkClient.request(.country(code: code))
+    }
+    
+    func fetchCountries(name: String) async throws -> [Country] {
+        try await netowrkClient.request(.searchCountries(keyword: name))
     }
 }

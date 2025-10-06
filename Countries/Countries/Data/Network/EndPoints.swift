@@ -9,6 +9,7 @@ import Foundation
 
 enum EndPoint {
     case country(code: String)
+    case searchCountries(keyword: String)
 }
 
 extension EndPoint {
@@ -24,12 +25,14 @@ extension EndPoint {
         switch self {
         case .country(let code):
             "\(Constants.Network.EndPoint.COUNTRY_BY_CODE)/\(code)"
+        case .searchCountries(let keyword):
+            "\(Constants.Network.EndPoint.SEARCH_COUNTRIES_BY_NAME)/\(keyword)"
         }
     }
     
     var params: [String: String] {
         switch self {
-        case .country:
+        case .country, .searchCountries:
             ["fields": "name,capital,currencies"]
         }
     }

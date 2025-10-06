@@ -10,11 +10,15 @@ import SwiftUI
 import Combine
 
 enum Route {
-    
+    case search
 }
 
 class AppCoordinator: ObservableObject {
     @Published var navigationPath = NavigationPath()
+    
+    func navigateToSearch() {
+        navigationPath.append(Route.search)
+    }
 }
 
 struct AppCoordinatorView: View {
@@ -23,10 +27,13 @@ struct AppCoordinatorView: View {
     
     var body: some View {
         NavigationStack(path: $appCoordinator.navigationPath) {
-            Group {
-                HomeView()
-            }
-            .environmentObject(appCoordinator)
+            HomeView()
+                .navigationDestination(for: Route.self, destination: { route in
+                    switch route {
+                    case .search: CountrySearchView()
+                    }
+                })
+                .environmentObject(appCoordinator)
         }
     }
 }
