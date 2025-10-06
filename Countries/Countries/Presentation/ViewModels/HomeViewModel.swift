@@ -18,11 +18,16 @@ class HomeViewModel: ObservableObject {
     func loadCountries() async {
         countries = .loading
         do {
-            let countriesData = try await countryUseCase.fetchUserCountry()
-            countries = .completed([countriesData])
+            let countriesData = try await countryUseCase.fetchCountries()
+            countries = .completed(countriesData)
         } catch {
             countries = .error(error)
         }
+    }
+    
+    func removeCountry(_ country: Country) {
+        let updatedCountries = countryUseCase.removeCountry(country)
+        countries = .completed(updatedCountries)
     }
 }
 

@@ -9,7 +9,7 @@ import XCTest
 @testable import Countries
 
 @MainActor
-class HomeViewModelTests: XCTestCase {
+final class HomeViewModelTests: XCTestCase {
     private var useCase: CountryUseCaseMock!
 
     override func setUp() {
@@ -21,7 +21,7 @@ class HomeViewModelTests: XCTestCase {
     func testLoadCountriesSetsLoadingThenCompleted() async {
         useCase.delayNanoseconds = 2_000_000_000 // 2 seconds
         
-        let sut = HomeViewModel()
+        let sut = await MainActor.run { HomeViewModel() }
 
         XCTAssertFalse(sut.countries.loading)
         let task = Task { await sut.loadCountries() }
@@ -36,7 +36,7 @@ class HomeViewModelTests: XCTestCase {
         useCase.delayNanoseconds = 2_000_000_000 // 2 seconds
         useCase.nextError = NetworkError.connectivity
         
-        let sut = HomeViewModel()
+        let sut = await MainActor.run { HomeViewModel() }
         let task = Task { await sut.loadCountries() }
         await Task.yield()
         XCTAssertTrue(sut.countries.loading)
@@ -45,9 +45,35 @@ class HomeViewModelTests: XCTestCase {
         XCTAssertFalse(sut.countries.completed)
     }
 
-    func testHomeScreenTitleIsLocalized()  {
-        let sut = HomeViewModel()
-        XCTAssertEqual(sut.title, "Home")
+    func testHomeScreenTitleIsLocalized() async {
+        let sut = await MainActor.run { HomeViewModel() }
+        XCTAssertEqual(sut.title, NSLocalizedString("HOME_SCREEN_TITLE", comment: ""))
+    }
+    
+    func testRemoveCountryUpdatesCountries() async {
+        let countries = [
+            Country(
+                name: CountryName(common: "Egypt", official: "Arab Republic of Egypt"),
+                currencies: ["EGP": Currency(name: "Egyptian pound")],
+                capital: ["Cairo"]
+            ),
+            Country(
+                name: CountryName(common: "United States", official: "United States of America"),
+                currencies: ["USD": Currency(name: "United States dollar")],
+                capital: ["Washington, D.C."]
+            )
+        ]
+        useCase.nextCountries = countries
+
+        let sut = await MainActor.run { HomeViewModel() }
+        sut.countries = .completed(countries)
+        
+        let countryToRemove = countries[0]
+        sut.removeCountry(countryToRemove)
+        
+        XCTAssertTrue(sut.countries.completed)
+        XCTAssertEqual(sut.countries.data?.count, 1)
+        XCTAssertEqual(sut.countries.data?.first?.name.common, "United States")
     }
 }
 

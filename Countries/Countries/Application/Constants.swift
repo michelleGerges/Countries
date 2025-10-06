@@ -14,4 +14,5 @@ class Constants {
          }
          static let SUCCESS_RESPONSE_CODE = 200
     }
+    static let MAX_COUNTRIES = 5
 }

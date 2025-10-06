@@ -26,7 +26,8 @@ struct CountrySearchView: View {
     
     @ViewBuilder var countriesList: some View {
         List(viewModel.countries) { country in
-            CountryItemView(country: country)
+            CountryItemView(country: country,
+                            action: viewModel.isCountryAdded(country) ? .added : .add(viewModel.addCountry))
         }
     }
     

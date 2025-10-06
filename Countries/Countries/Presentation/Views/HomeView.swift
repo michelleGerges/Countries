@@ -38,7 +38,8 @@ struct HomeView: View {
     @ViewBuilder var countriesList: some View {
         if let countries = viewModel.countries.data {
             List(countries) { country in
-                CountryItemView(country: country)
+                CountryItemView(country: country,
+                                action: countries.count == 1 ? .none : .remove(viewModel.removeCountry))
             }
         }
     }

@@ -9,32 +9,35 @@ import XCTest
 @testable import Countries
 
 @MainActor
-class CountryUseCaseDomainTests: XCTestCase {
+final class CountryUseCaseDomainTests: XCTestCase {
     private var location: LocationProviderMock!
-    private var repo: CountryRemoteRepoMock!
+    private var remoteRepo: CountryRemoteRepoMock!
+    private var localeRepo: CountryLocaleRepoMock!
 
     override func setUp() {
         super.setUp()
         location = LocationProviderMock()
-        repo = CountryRemoteRepoMock()
+        remoteRepo = CountryRemoteRepoMock()
+        localeRepo = CountryLocaleRepoMock()
         DIContainer.shared.register(LocationProvider.self) { self.location }
-        DIContainer.shared.register(CountryRemoteRepo.self) { self.repo}
+        DIContainer.shared.register(CountryRemoteRepo.self) { self.remoteRepo }
+        DIContainer.shared.register(CountryLocaleRepo.self) { self.localeRepo }
     }
 
-    func testFetchUserCountryUsesLocationProviderAndRepo() async throws {
-
-        location.nextCode = "EG"
-        repo.nextCountry = Country(
-            name: CountryName(common: "Egypt", official: "Arab Republic of Egypt"),
-            currencies: ["EGP": Currency(name: "Egyptian pound")],
-            capital: ["Cairo"]
-        )
+    func testFetchCountriesReturnsLocalCountriesWhenAvailable() async throws {
+        let countries = [
+            Country(
+                name: CountryName(common: "Egypt", official: "Arab Republic of Egypt"),
+                currencies: ["EGP": Currency(name: "Egyptian pound")],
+                capital: ["Cairo"]
+            )
+        ]
+        localeRepo.nextCountries = countries
 
         let sut = CountryUseCaseImplementation()
-        let result = try await sut.fetchUserCountry()
+        let result = try await sut.fetchCountries()
 
-        XCTAssertEqual(result.name.common, "Egypt")
+        XCTAssertEqual(result.count, 1)
+        XCTAssertEqual(result.first?.name.common, "Egypt")
     }
 }
-
-

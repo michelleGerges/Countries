@@ -30,7 +30,7 @@ class DIContainer {
     static let shared = DIContainer()
     private var factories: [String: () -> Any] = [:]
     
-    func register<T>(_ dependency: T.Type, _ factory: @escaping () -> T) {
+    func register<T>(_ dependency: T.Type, _ factory: @escaping () -> T?) {
         factories[String(describing: T.self)] = factory
     }
     
@@ -42,6 +42,8 @@ class DIContainer {
         register(URLSessionProtocol.self) { URLSession.shared }
         register(NetworkClient.self) { NetworkClientImplementation() }
         register(CountryRemoteRepo.self) { CountryRemoteRepoImplementation() }
+        register(ModelContextProtocol.self) { ModelContextWrapper() }
+        register(CountryLocaleRepo.self) { CountryLocaleRepoImplementation() }
         register(LocationProvider.self) { LocationProviderImplementation() }
         register(CountryUseCase.self) { CountryUseCaseImplementation() }
         register(CountrySearchUseCase.self) { CountrySearchUseCaseImplementation() }
