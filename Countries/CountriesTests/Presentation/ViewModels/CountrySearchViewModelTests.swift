@@ -11,10 +11,13 @@ import XCTest
 @MainActor
 final class CountrySearchViewModelTests: XCTestCase {
     private var searchUseCase: CountrySearchUseCaseMock!
+    private var countryUseCase: CountryUseCaseMock!
 
     override func setUp() {
         super.setUp()
         searchUseCase = CountrySearchUseCaseMock()
+        countryUseCase = CountryUseCaseMock()
+        DIContainer.shared.register(CountryUseCase.self) { self.countryUseCase }
         DIContainer.shared.register(CountrySearchUseCase.self) { self.searchUseCase }
     }
 
@@ -58,4 +61,15 @@ final class CountrySearchViewModelTests: XCTestCase {
         XCTAssertEqual(sut.title, "Search")
     }
     
+    func testIsCountryAddedReturnsTrueWhenCountryExists() {
+        let sut = CountrySearchViewModel()
+        let country = Country(
+            name: CountryName(common: "Egypt", official: "Arab Republic of Egypt"),
+            currencies: ["EGP": Currency(name: "Egyptian pound")],
+            capital: ["Cairo"]
+        )
+        sut.addedCountries = [country]
+        
+        XCTAssertTrue(sut.isCountryAdded(country))
+    }    
 }

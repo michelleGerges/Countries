@@ -14,12 +14,15 @@ class CountrySearchViewModel: ObservableObject {
     @Published var searchState = ContentState<Void>.idle
     @Published var countries: [Country] = []
     @Published var searchKeyword: String = ""
+    @Published var addedCountries = [Country]()
     
     @Dependency private var searchUseCase: CountrySearchUseCase
+    @Dependency private var countriesUseCase: CountryUseCase
     
     private var cancellables = Set<AnyCancellable>()
     
     init() {
+        updateAddedCountries()
         $searchKeyword
             .map { $0.trimmingCharacters(in: .whitespaces) }
             .debounce(for: .seconds(1), scheduler: DispatchQueue.main)
@@ -48,6 +51,18 @@ class CountrySearchViewModel: ObservableObject {
     func clearSearch() {
         searchState = .idle
         countries.removeAll()
+    }
+    
+    func isCountryAdded(_ country: Country) -> Bool {
+        addedCountries.contains { $0.id == country.id }
+    }
+    
+    func addCountry(_ country: Country) {
+        addedCountries = countriesUseCase.addCountry(country)
+    }
+    
+    func updateAddedCountries() {
+        Task { addedCountries = try await countriesUseCase.fetchCountries() }
     }
     
     deinit {
